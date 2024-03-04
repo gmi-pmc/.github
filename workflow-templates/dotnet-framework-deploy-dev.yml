@@ -28,11 +28,11 @@ jobs:
     if: (!(startsWith(needs.setup-env.outputs.source_branch, 'dependabot')))
     runs-on: Windows
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       # View documentation for the setup-dotnet action here: https://github.com/actions/setup-dotnet
       - name: Setup dotnet.exe
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 6.0.x
       - name: Restore NuGet dependencies
@@ -44,7 +44,7 @@ jobs:
       
       # Create build artifacts using the filterBuildOutput action
       - name: Copy files to .build folder
-        uses: gmi-actions/filterBuildOutput@v0.1
+        uses: gmi-actions/filterBuildOutput@v1
         with:
           sourceFolderName: ExampleDotNetCoreSolution.Web
           destinationFolderName: /.build/${{env.PACKAGE_NAME}}
@@ -55,14 +55,14 @@ jobs:
       
       # Create Zip of artifacts using the createArtifact action
       - name: Zip files
-        uses: gmi-actions/createArtifact@v1.1
+        uses: gmi-actions/createArtifact@v1
         with:
           packageName: ${{env.PACKAGE_NAME}}
           sourceFolderName: /.build/${{env.PACKAGE_NAME}}
       
       # Upload artifacts to Artifactory
       - name: Setup JFrog CLI
-        uses: jfrog/setup-jfrog-cli@v3
+        uses: jfrog/setup-jfrog-cli@v4
         env:
           JF_ENV_1: ${{ secrets.ARTIFACTORY_PROD }}
       # Push artifacts to snapshot on every build
@@ -88,7 +88,6 @@ jobs:
       platform: ExamplePlatform                       # CHANGE ME TO YOUR DESIRED DEPLOYMENT PLATFORM!!!
       environment: Development
       deployment_name: ${{env.PACKAGE_NAME}}          # CHANGE ME TO THE NAME OF THE SITE OR SERVICE BEING DEPLOYED!!!
-      source: ${{env.PACKAGE_NAME}}.zip               # CHANGE ME TO THE LOCATION OF THE ARTIFACT BEING DEPLOYED!!!
       destination: wwwroot$\${{env.PACKAGE_NAME}}     # CHANGE ME TO THE LOCATION OF THE SITE OR SERVICE BEING DEPLOYED!!!
       repository_name: web-packages-snapshot-local    # Typically will use web-packages-snapshot-local for Development
       # stop_and_start_app_pool: true                 # UNCOMMENT IF THE APP POOL SHOULD BE STOPPED BEFORE DEPLOYMENT AND STARTED AFTER DEPLOYMENT
